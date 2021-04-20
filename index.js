@@ -72,19 +72,39 @@ Vue.component("page-header", {
 });
 
 Vue.component("notify-me", {
+  data: function(){
+    return {
+    visitor_email: null
+    }
+  },
     template: `<div class="notify-me-container md:w-4/5">
     <div class="form-container relative">
       <div class="input-container">
-        <input type="email" class="leading-loose px-5 py-2 w-full bg-gray-500 rounded-full outline-none" placeholder="Enter Your Email Address" />
+        <input type="email" v-model="visitor_email" class="leading-loose px-5 py-2 w-full bg-gray-500 rounded-full outline-none" placeholder="Enter Your Email Address" />
       </div>
       <div class="submit-container button-container">
-        <button type="submit" class="absolute inset-y-0.5 right-0.5 z-10 bg-gray-800 leading-3 px-10 py-3.5 rounded-full outline-none">Notify Me</button>
+        <button @click="sendMail" type="submit" class="absolute inset-y-0.5 right-0.5 z-10 bg-gray-800 leading-3 px-10 py-3.5 rounded-full outline-none">Notify Me</button>
       </div>
     </div>
     <div class="notify-me-footer">
         <p class="text-gray-500 md:mt-5 md:text-lg text-sm md:font-medium font-normal md:text-left text-center">*Don't Worry we will not spam you</p>
       </div>
   </div>`,
+  methods: {
+    sendMail: function() {
+      $options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visitor_email: this.visitor_email, admin_email: "aibuild.net@gmail.com" })
+      }
+      fetch('./notify-me.php',$options)
+        .then(async response => {
+          const data = await response.json();
+
+          console.log(data);
+        })
+    }
+  }
   });
 
   Vue.component("social_links", {
