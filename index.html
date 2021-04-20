@@ -4,11 +4,17 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Coming Soon</title>
+    <link
+      rel="shortcut icon"
+      href="https://desdistrict.com/wp-content/uploads/2020/09/cropped-tdd-circular-sm-180x180.png"
+      type="image/x-icon"
+    />
+    <title>Coming Soon - PYG Travels</title>
     <link
       href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="./index.css" />
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script
       src="https://kit.fontawesome.com/f7d27e4994.js"
@@ -17,7 +23,14 @@
   </head>
   <body>
     <div id="page" v-bind:title="timestamp" class="page-container">
-      <coming_soon></coming_soon>
+      <coming-soon
+        company_name="PYG Travels"
+        image_link="https://images.vexels.com/media/users/3/212834/isolated/preview/e86f74fdb56867ea1aa31b8810da16eb-luggage-plane-travel-icon-sign-by-vexels.png"
+        fb_link="https://web.facebook.com/search/top?q=pygtravels"
+        twitter_link="https://twitter.com/hashtag/pygtravels"
+        ig_link="https://www.instagram.com/explore/tags/pygtravels/"
+        yt_link="https://www.youtube.com/results?search_query=travels"
+      ></coming-soon>
     </div>
     <script src="./index.js"></script>
   </body>
