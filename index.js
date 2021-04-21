@@ -77,7 +77,8 @@ Vue.component("notify-me", {
     return {
     visitor_email: null,
     feedback: false,
-    notifyMeFeedBackClass : ""
+    notifyMeFeedBackClass : "",
+    loading: false
     }
   },
     template: `<div class="notify-me-container md:w-4/5">
@@ -86,7 +87,9 @@ Vue.component("notify-me", {
         <input type="email" v-model="visitor_email" class="leading-loose px-5 py-2 w-full bg-gray-500 rounded-full outline-none" placeholder="Enter Your Email Address" />
       </div>
       <div class="submit-container button-container">
-        <button @click="sendMail" type="submit" class="absolute inset-y-0.5 right-0.5 z-10 bg-gray-800 leading-3 px-10 py-3.5 rounded-full outline-none focus:outline-none focus:bg-gray-900 hover:bg-gray-700 ">Notify Me</button>
+        <button @click="sendMail" type="submit" class="absolute inset-y-0.5 right-0.5 z-10 bg-gray-800 leading-3 px-10 py-3.5 rounded-full outline-none focus:outline-none focus:bg-gray-900 hover:bg-gray-700 ">
+        <span v-if="!loading">Notify Me</span> 
+        <div v-if="loading" class="relative -top-1 "><div class="loader"></div></div></button>
       </div>
     </div>
     <div class="notify-me-footer">
@@ -102,6 +105,7 @@ Vue.component("notify-me", {
         body: JSON.stringify({ visitor_email: this.visitor_email, admin_email: this.admin_email })
       }
       if(this.visitor_email !== null && this.visitor_email !== null && this.validateEmail(this.visitor_email)){
+        this.loading = true;
         fetch('./notify-me.php',$options)
           .then(async response => {
             const data = await response.json();
@@ -113,6 +117,9 @@ Vue.component("notify-me", {
             }
             this.visitor_email = "";
           })
+          .then(() =>{
+            this.loading = false;
+          });
       }else{
         this.feedback = "🚩 Kindly Supply a Valid Email";
         this.notifyMeFeedBackClass = "text-red-500"
