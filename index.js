@@ -1,6 +1,6 @@
 // List of to do items (accepts an array as props)
 Vue.component("coming-soon", {
-    props: ["fb_link", "twitter_link", "ig_link", "yt_link","image_link","company_name"],
+    props: ["fb_link", "twitter_link", "ig_link", "yt_link","image_link","company_name", "admin_email"],
     template: `<div class='font-sans'>
     <section class="main-section px-4 bg-gray-900 text-white">
 
@@ -12,11 +12,11 @@ Vue.component("coming-soon", {
         <p class="md:text-lg text-md font-light md:mb-10 mb-5">Coming Soon</p>
         <h1 class="md:text-7xl text-3xl font-bold md:w-4/5">Wanna <span class="text-gray-500">see</span> something <span class="text-gray-500">amazing</span>?</h1>
         <h3 class="md:text-2xl text-md md:mt-10 mt-5 font-normal">We will love to Notify you when we are ready to serve you</h3>
-        <notify-me class="mt-10"></notify-me>
+        <notify-me class="mt-10" :admin_email="admin_email" :company_name = "company_name"></notify-me>
       </div>
 
       <div class="hero-side-b w-full md:w-2/5 md:mt-0 mt-10">
-        <div class="social-container max-w-80 mx-auto bg-white p-2 rounded-lg">
+        <div class="social-container max-w-lg mx-auto bg-white p-2 rounded-lg">
           <div class="image-container h-80 rounded-md bg-no-repeat bg-cover" style="background-image:url(https://picsum.photos/500/300);">
             
           </div>
@@ -47,7 +47,7 @@ Vue.component("coming-soon", {
         </div>
         <div class="ttp-text p-2 py-8">
           <h4 class="text-xl font-bold">Amazing Projects from your favorite tech team</h4>
-          <a href="https://desdistrict.com/work/" class="inline-block my-1 text-sm font-medium py-1.5 px-6 bg-yellow-400 rounded-xl">See All Here</a>
+          <a href="https://desdistrict.com/work/" class="inline-block my-1 text-sm font-medium py-1.5 px-6 bg-yellow-400 rounded-xl hover:bg-yellow-300 focus:bg-yellow-500">See All Here</a>
         </div>
       </div>
       </a>
@@ -72,9 +72,12 @@ Vue.component("page-header", {
 });
 
 Vue.component("notify-me", {
+  props: ["company_name", "admin_email"],
   data: function(){
     return {
-    visitor_email: null
+    visitor_email: null,
+    feedback: false,
+    notifyMeFeedBackClass : ""
     }
   },
     template: `<div class="notify-me-container md:w-4/5">
@@ -83,10 +86,11 @@ Vue.component("notify-me", {
         <input type="email" v-model="visitor_email" class="leading-loose px-5 py-2 w-full bg-gray-500 rounded-full outline-none" placeholder="Enter Your Email Address" />
       </div>
       <div class="submit-container button-container">
-        <button @click="sendMail" type="submit" class="absolute inset-y-0.5 right-0.5 z-10 bg-gray-800 leading-3 px-10 py-3.5 rounded-full outline-none">Notify Me</button>
+        <button @click="sendMail" type="submit" class="absolute inset-y-0.5 right-0.5 z-10 bg-gray-800 leading-3 px-10 py-3.5 rounded-full outline-none focus:outline-none focus:bg-gray-900 hover:bg-gray-700 ">Notify Me</button>
       </div>
     </div>
     <div class="notify-me-footer">
+      <p :class="'notify-me-feedback md:text-sm text-xs md:font-normal font-light md:text-left text-center my-1 '+notifyMeFeedBackClass" v-if="feedback">{{feedback}}</p>
         <p class="text-gray-500 md:mt-5 md:text-lg text-sm md:font-medium font-normal md:text-left text-center">*Don't Worry we will not spam you</p>
       </div>
   </div>`,
@@ -95,14 +99,28 @@ Vue.component("notify-me", {
       $options = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ visitor_email: this.visitor_email, admin_email: "aibuild.net@gmail.com" })
+        body: JSON.stringify({ visitor_email: this.visitor_email, admin_email: this.admin_email })
       }
-      fetch('./notify-me.php',$options)
-        .then(async response => {
-          const data = await response.json();
-
-          console.log(data);
-        })
+      if(this.visitor_email !== null && this.visitor_email !== null && this.validateEmail(this.visitor_email)){
+        fetch('./notify-me.php',$options)
+          .then(async response => {
+            const data = await response.json();
+            this.feedback = data.message;
+            if (data.status){
+              this.notifyMeFeedBackClass = "text-green-500"
+            }else{
+              this.notifyMeFeedBackClass = "text-red-500"
+            }
+            this.visitor_email = "";
+          })
+      }else{
+        this.feedback = "🚩 Kindly Supply a Valid Email";
+        this.notifyMeFeedBackClass = "text-red-500"
+      }
+    },
+    validateEmail(email) {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
     }
   }
   });
@@ -144,7 +162,7 @@ type="text/javascript"
 new Vue({
     el: "#page",
     data: {
-      message: "🐵 Hello World 🔮",
+      message: "🐵 Hello From Desdistrict 🔮",
       timestamp: `Timestamp ${new Date().toLocaleString()}`,
     },
   });
